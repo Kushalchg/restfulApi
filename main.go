@@ -3,6 +3,7 @@ package main
 import (
 	"practice/restfulApi/initializers"
 	"practice/restfulApi/routes"
+	"practice/restfulApi/test"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,10 +14,9 @@ func init() {
 }
 
 func main() {
-
+	test.Test()
 	r := gin.Default()
-
-	// initializing routes
+	// Registering routers
 	routes.PostRoutes(r)
 	routes.UserRoutes(r)
 

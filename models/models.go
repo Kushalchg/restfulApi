@@ -16,9 +16,8 @@ type UserDetail struct {
 	Mobile  int
 	Address string
 }
-
 type User struct {
 	gorm.Model
-	Email    string
-	Password string
+	Email    string `validate:"email,required"`
+	Password string `validate:"required,min=8"`
 }

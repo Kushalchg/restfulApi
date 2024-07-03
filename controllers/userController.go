@@ -18,9 +18,10 @@ func UserRegister(c *gin.Context) {
 	user := models.User{Email: body.Email, Password: body.Password}
 
 	result := initializers.DB.Create(&user)
+	// result := initializers.DB.Exec("INSERT INTO users (Email,Password) VALUES (?,?)", body.Email, body.Password)
 
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusOK, gin.H{
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error":  "error occur while user register",
 			"detail": result.Error.Error(),
 		})
