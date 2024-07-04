@@ -6,9 +6,14 @@ import (
 	"practice/restfulApi/test"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
+var Validate *validator.Validate
+
 func init() {
+
+	Validate = validator.New(validator.WithRequiredStructEnabled())
 	initializers.LoadEnv()
 	initializers.ConnectDB()
 }

@@ -6,12 +6,30 @@ import (
 	"practice/restfulApi/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
+
+var Validate *validator.Validate
+
+func init() {
+	Validate = validator.New(validator.WithRequiredStructEnabled())
+
+}
 
 func UserRegister(c *gin.Context) {
 	var body struct {
-		Email    string
-		Password string
+		Email    string `validate:"email,required"`
+		Password string `validate:"required,min=8"`
+	}
+
+	if err := Validate.Struct(body); err != nil {
+		// fmt.Printf("validation Failed %s \n", err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error":  "missmatch with required format",
+			"detail": err,
+		})
+		return
+
 	}
 
 	c.Bind(&body)
