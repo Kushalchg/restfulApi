@@ -18,6 +18,6 @@ type UserDetail struct {
 }
 type User struct {
 	gorm.Model
-	Email    string `validate:"email,required"`
-	Password string `validate:"required,min=8"`
+	Email    string
+	Password string
 }
