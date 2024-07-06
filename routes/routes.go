@@ -16,4 +16,5 @@ func PostRoutes(r *gin.Engine) {
 
 func UserRoutes(r *gin.Engine) {
 	r.POST("/user/register", controllers.UserRegister)
+	r.POST("/user/login", controllers.UserLogin)
 }

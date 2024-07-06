@@ -18,6 +18,6 @@ type UserDetail struct {
 }
 type User struct {
 	gorm.Model
-	Email    string
-	Password string
+	Email    string `gorm:"unique"`
+	Password string `gorm:"not null"`
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"practice/restfulApi/initializers"
 	"practice/restfulApi/routes"
-	"practice/restfulApi/test"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -19,7 +18,7 @@ func init() {
 }
 
 func main() {
-	test.Test()
+	// test.Test()
 	r := gin.Default()
 	// Registering routers
 	routes.PostRoutes(r)
