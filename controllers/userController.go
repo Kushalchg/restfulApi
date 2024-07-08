@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"practice/restfulApi/global"
 	"practice/restfulApi/helpers"
 	"practice/restfulApi/initializers"
 	"practice/restfulApi/models"
@@ -48,7 +48,7 @@ func UserRegister(c *gin.Context) {
 	// password must contain min 8 letters
 	// conform password must match password
 	if err := Validate.Struct(&body); err != nil {
-		fmt.Printf("validation Failed %s \n", err)
+		global.Logger.Printf("validation Failed %s \n", err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error":  "required format is not met!",
 			"detail": err.Error(),
@@ -73,7 +73,7 @@ func UserRegister(c *gin.Context) {
 
 	result := initializers.DB.Create(&user)
 
-	fmt.Printf("the result and error is  %v and %v \n", result, result.Error)
+	global.Logger.Printf("the result and error is  %v and %v \n", result, result.Error)
 	if result.Error != nil {
 
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
@@ -109,9 +109,9 @@ func UserLogin(c *gin.Context) {
 	result := initializers.DB.Find(&user, " Email= ? ", body.Email).First(&user)
 
 	// result := initializers.DB.Where(&user{Email: body.Email, Password: body.Password})
-	fmt.Printf("the result is %v \n", result)
-	fmt.Printf("the result is %v \n", user)
-	fmt.Printf("rows affected is  %v \n", result.RowsAffected)
+	global.Logger.Printf("the result is %v \n", result)
+	global.Logger.Printf("the result is %v \n", user)
+	global.Logger.Printf("rows affected is  %v \n", result.RowsAffected)
 	// log.Fatal("the result is ii ")
 
 	if result.Error != nil {
@@ -146,7 +146,7 @@ func UserLogin(c *gin.Context) {
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
-			ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 15).Unix(),
 		},
 	}
 
@@ -156,7 +156,7 @@ func UserLogin(c *gin.Context) {
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
-			ExpiresAt: time.Now().Add(time.Hour * 15).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 500).Unix(),
 		},
 	}
 	accessToken, err := helpers.GenerateAccess(accessClaims)
@@ -169,7 +169,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := helpers.GenerateAccess(refreshClaims)
+	refreshToken, err := helpers.GenerateRefresh(refreshClaims)
 	if err != nil {
 
 		c.IndentedJSON(http.StatusBadRequest, gin.H{

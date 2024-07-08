@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"log"
 	"practice/restfulApi/helpers"
 	"time"
 
@@ -33,7 +34,10 @@ func Test() {
 	staticToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoia3VzaGFsIiwiUm9sZSI6IkRldmVsb3BlciIsIlVzZXJJZCI6MiwiZXhwIjoxNzIwMTM1NzMyLCJpYXQiOjE3MjAwODE3MzJ9.J5dKx4WWO6HnSKMIuqhcM1gkzptbe9yiRMptcoUmQpo"
 
 	// validating accessToken
-	token := helpers.ParseAccessToken(staticToken)
+	token, err := helpers.ParseAccessToken(staticToken)
+	if err != nil {
+		log.Fatal("error occured while parsing")
+	}
 	actualTokenValue, err := helpers.GenerateAccess(*token)
 
 	if err != nil {

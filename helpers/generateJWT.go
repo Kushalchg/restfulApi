@@ -1,10 +1,8 @@
 package helpers
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -44,32 +42,33 @@ func GenerateRefresh(claims MyClaims) (string, error) {
 
 }
 
-func ParseAccessToken(accessToken string) *MyClaims {
+func ParseAccessToken(accessToken string) (*MyClaims, error) {
 	parsedAccessToken, err := jwt.ParseWithClaims(accessToken, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("KEY")), nil
 	})
-	if err != nil {
-		fmt.Printf("error occur while parsing the jwt token %v \n", err)
-		// access token is not valid anymore
-		// generate new access Token and return the claims of that new access token
-		newClaims := MyClaims{
-			Name:   "kushal",
-			Role:   "Developer",
-			UserId: 2,
-			StandardClaims: jwt.StandardClaims{
-				IssuedAt:  time.Now().Unix(),
-				ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
-			},
-		}
-		newAccessToken, err := GenerateAccess(newClaims)
-		if err != nil {
-			log.Fatal("error creating new access Token")
-		}
+	// if err != nil {
+	// 	fmt.Printf("error occur while parsing the jwt token %v \n", err)
+	// 	// access token is not valid anymore
+	// 	// generate new access Token and return the claims of that new access token
+	// 	// newClaims := MyClaims{
+	// 	// 	Name:   "kushal",
+	// 	// 	Role:   "Developer",
+	// 	// 	UserId: 2,
+	// 	// 	StandardClaims: jwt.StandardClaims{
+	// 	// 		IssuedAt:  time.Now().Unix(),
+	// 	// 		ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
+	// 	// 	},
+	// 	// }
+	// 	// newAccessToken, err := GenerateAccess(newClaims)
+	// 	// if err != nil {
+	// 	// 	log.Fatal("error creating new access Token")
+	// 	// }
 
-		return ParseAccessToken(newAccessToken)
-	}
+	// 	// return ParseAccessToken(newAccessToken)
 
-	return parsedAccessToken.Claims.(*MyClaims)
+	// }
+
+	return parsedAccessToken.Claims.(*MyClaims), err
 }
 
 func ParseRefreshToken(refreshToken string) *MyClaims {
@@ -88,8 +87,11 @@ func ParseRefreshToken(refreshToken string) *MyClaims {
 }
 
 func ValidateAccessToken(accessToken string) string {
-	accessClaims := ParseAccessToken(accessToken)
+	accessClaims, err := ParseAccessToken(accessToken)
 
+	if err != nil {
+		log.Fatal("error occured while valideatin")
+	}
 	//access token is expired
 	if accessClaims.Valid() != nil {
 		log.Fatal("access token is expired generating new access Token")

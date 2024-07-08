@@ -63,6 +63,7 @@ func GetSinglePost(c *gin.Context) {
 func UpdatePost(c *gin.Context) {
 
 	var post models.Post
+
 	//get the id from param
 	id := c.Param("id")
 
@@ -71,22 +72,16 @@ func UpdatePost(c *gin.Context) {
 		Title string
 		Body  string
 	}
+	err := c.Bind(&body)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
 
-	c.Bind(&body)
-
-	//update that post
-	updateResult := initializers.DB.Model(&post).Updates(models.Post{Title: body.Title, Body: body.Body})
-	// updateQuery := `
-	// UPDATE users
-	// SET
-	//     Title= COALESCE(NULLIF($1, ''), Title),
-	//     Body= COALESCE(NULLIF($2, ''), Body)
-	// WHERE id = $3`
-	// updateResult := initializers.DB.Exec(updateQuery, body.Title, body.Body, id)
-
-	//find the post
+	// it reterive  the post with given id and store on address of post
 	result := initializers.DB.First(&post, id)
-
 	if result.Error != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": result.Error.Error(),
@@ -94,6 +89,8 @@ func UpdatePost(c *gin.Context) {
 		return
 	}
 
+	//update that post and what store on address of post
+	updateResult := initializers.DB.Model(&post).Updates(models.Post{Title: body.Title, Body: body.Body})
 	if result.Error != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": updateResult.Error.Error(),
@@ -103,8 +100,9 @@ func UpdatePost(c *gin.Context) {
 	// response with updated data
 
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"data":  "successfully updated data",
-		"value": post,
+		"data":        "successfully updated data",
+		"recentValue": body.Title,
+		"value":       post,
 	})
 
 }
