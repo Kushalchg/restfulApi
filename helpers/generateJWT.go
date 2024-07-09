@@ -46,43 +46,17 @@ func ParseAccessToken(accessToken string) (*MyClaims, error) {
 	parsedAccessToken, err := jwt.ParseWithClaims(accessToken, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("KEY")), nil
 	})
-	// if err != nil {
-	// 	fmt.Printf("error occur while parsing the jwt token %v \n", err)
-	// 	// access token is not valid anymore
-	// 	// generate new access Token and return the claims of that new access token
-	// 	// newClaims := MyClaims{
-	// 	// 	Name:   "kushal",
-	// 	// 	Role:   "Developer",
-	// 	// 	UserId: 2,
-	// 	// 	StandardClaims: jwt.StandardClaims{
-	// 	// 		IssuedAt:  time.Now().Unix(),
-	// 	// 		ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
-	// 	// 	},
-	// 	// }
-	// 	// newAccessToken, err := GenerateAccess(newClaims)
-	// 	// if err != nil {
-	// 	// 	log.Fatal("error creating new access Token")
-	// 	// }
-
-	// 	// return ParseAccessToken(newAccessToken)
-
-	// }
 
 	return parsedAccessToken.Claims.(*MyClaims), err
 }
 
-func ParseRefreshToken(refreshToken string) *MyClaims {
+func ParseRefreshToken(refreshToken string) (*MyClaims, error) {
 	//it retrun error on expire tocken so only return the value of token successful token
 	ParseRefreshToken, err := jwt.ParseWithClaims(refreshToken, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("KEY")), nil
 	})
-	if err != nil {
-		// refresh token is not valid anymore
-		// since refesh token is not valid user need to logedin
-		// make endpoint to check validation of refreshToken and if not valid sent refreshToken is not valid message
-	}
 
-	return ParseRefreshToken.Claims.(*MyClaims)
+	return ParseRefreshToken.Claims.(*MyClaims), err
 
 }
 

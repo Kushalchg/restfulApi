@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"practice/restfulApi/global"
 	"practice/restfulApi/initializers"
 	"practice/restfulApi/models"
 
@@ -11,11 +12,22 @@ import (
 func PostCreate(c *gin.Context) {
 	// var body models.Post
 	var body struct {
-		Title string
-		Body  string
+		Title string `json:"title" validate:"required"`
+		Body  string `json:"body" validate:"required"`
 	}
 
 	c.Bind(&body)
+
+	// validate the requested body
+	// requested body must contain title and body
+	if err := global.Validate.Struct(&body); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error":  "the requested body must contain both Title and Body field",
+			"detail": err.Error(),
+		})
+		return
+	}
+
 	post := models.Post{Title: body.Title, Body: body.Body}
 	// post := models.Post{Title: "title", Body: "body"}
 	result := initializers.DB.Create(&post)
@@ -33,6 +45,7 @@ func PostCreate(c *gin.Context) {
 
 }
 func GetPost(c *gin.Context) {
+
 	var posts []models.Post
 	initializers.DB.Find(&posts)
 
@@ -69,8 +82,8 @@ func UpdatePost(c *gin.Context) {
 
 	//get the body data
 	var body struct {
-		Title string
-		Body  string
+		Title string `json:"title"`
+		Body  string `json:"body"`
 	}
 	err := c.Bind(&body)
 	if err != nil {

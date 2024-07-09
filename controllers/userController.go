@@ -10,21 +10,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var Validate *validator.Validate
-
 type responseData struct {
 	Refresh string
 	Access  string
-}
-
-func init() {
-	Validate = validator.New(validator.WithRequiredStructEnabled())
-
 }
 
 func UserRegister(c *gin.Context) {
@@ -47,7 +39,7 @@ func UserRegister(c *gin.Context) {
 	// email must be in email format
 	// password must contain min 8 letters
 	// conform password must match password
-	if err := Validate.Struct(&body); err != nil {
+	if err := global.Validate.Struct(&body); err != nil {
 		global.Logger.Printf("validation Failed %s \n", err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error":  "required format is not met!",
@@ -93,8 +85,8 @@ func UserRegister(c *gin.Context) {
 func UserLogin(c *gin.Context) {
 	var user models.User
 	var body struct {
-		Email    string
-		Password string
+		Email    string `validate:"required,email"`
+		Password string `validate:"required"`
 	}
 
 	if err := c.Bind(&body); err != nil {
@@ -102,6 +94,17 @@ func UserLogin(c *gin.Context) {
 			"error":  "Unable to signin with error",
 			"detail": err,
 		})
+	}
+	// check validation of requested body
+
+	if err := global.Validate.Struct(&body); err != nil {
+		global.Logger.Printf("validation Failed %s \n", err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error":  "required format is not met!",
+			"detail": err.Error(),
+		})
+		return
+
 	}
 
 	// check if the user provided email is present or not?
@@ -142,7 +145,7 @@ func UserLogin(c *gin.Context) {
 	// generate access token and refresh token and send on response of login
 	accessClaims := helpers.MyClaims{
 		Name:   user.Email,
-		Role:   "Developer",
+		Role:   "admin",
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
@@ -152,7 +155,7 @@ func UserLogin(c *gin.Context) {
 
 	refreshClaims := helpers.MyClaims{
 		Name:   user.Email,
-		Role:   "Developer",
+		Role:   "admin",
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),

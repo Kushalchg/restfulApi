@@ -11,8 +11,8 @@ func PostRoutes(r *gin.Engine) {
 	r.GET("/posts", helpers.AuthMiddleware(), controllers.GetPost)
 	r.POST("/posts", helpers.AuthMiddleware(), controllers.PostCreate)
 	r.GET("/posts/:id", helpers.AuthMiddleware(), controllers.GetSinglePost)
-	r.PATCH("/posts/:id", helpers.AuthMiddleware(), controllers.UpdatePost)
-	r.DELETE("/posts/:id", helpers.AuthMiddleware(), controllers.DeletePost)
+	r.PATCH("/posts/:id", helpers.AdminAuth(), controllers.UpdatePost)
+	r.DELETE("/posts/:id", helpers.AdminAuth(), controllers.DeletePost)
 }
 
 func UserRoutes(r *gin.Engine) {
