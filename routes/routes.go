@@ -19,3 +19,7 @@ func UserRoutes(r *gin.Engine) {
 	r.POST("/user/register", controllers.UserRegister)
 	r.POST("/user/login", controllers.UserLogin)
 }
+
+func UtilityRoutes(r *gin.Engine) {
+	r.POST("/refresh", helpers.AuthMiddleware(), controllers.CreateNewTokens)
+}

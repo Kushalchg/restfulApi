@@ -45,6 +45,13 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		if claims.Type != "access" {
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{
+				"error": "You probably provide wrong token",
+			})
+			c.Abort()
+			return
+		}
 
 		global.Logger.Print("the value is ", claims.Name)
 		// validate json token from authorization key

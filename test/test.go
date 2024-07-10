@@ -12,6 +12,7 @@ import (
 func Test() {
 	userClaims := helpers.MyClaims{
 		Name:   "kushal",
+		Type:   "access",
 		Role:   "Developer",
 		UserId: 2,
 		StandardClaims: jwt.StandardClaims{

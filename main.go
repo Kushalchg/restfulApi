@@ -43,6 +43,7 @@ func main() {
 	// Registering routers
 	routes.PostRoutes(r)
 	routes.UserRoutes(r)
+	routes.UtilityRoutes(r)
 
 	r.Run()
 }

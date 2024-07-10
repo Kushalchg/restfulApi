@@ -14,14 +14,14 @@ var (
 )
 
 type MyClaims struct {
-	Name   string `json:name`
-	Role   string `json:role`
-	UserId int    `json:user_id`
+	Name   string
+	Type   string
+	Role   string
+	UserId int
 	jwt.StandardClaims
 }
 
 func GenerateAccess(claims MyClaims) (string, error) {
-
 	keyValue = []byte(os.Getenv("KEY"))
 	var err error
 	token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -32,14 +32,12 @@ func GenerateAccess(claims MyClaims) (string, error) {
 }
 
 func GenerateRefresh(claims MyClaims) (string, error) {
-
 	keyValue = []byte(os.Getenv("KEY"))
 	var err error
 	token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenValue, err = token.SignedString(keyValue)
 
 	return tokenValue, err
-
 }
 
 func ParseAccessToken(accessToken string) (*MyClaims, error) {

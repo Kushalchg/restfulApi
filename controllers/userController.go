@@ -22,9 +22,9 @@ type responseData struct {
 func UserRegister(c *gin.Context) {
 
 	var body struct {
-		Email           string ` validate:"required,email"  `
-		Password        string `validate:"required,min=8"`
-		ConformPassword string `validate:"required,eqfield=Password"`
+		Email           string `json:"email" validate:"required,email"  `
+		Password        string `json:"password" validate:"required,min=8"`
+		ConformPassword string `json:"conform_password" validate:"required,eqfield=Password"`
 	}
 
 	if err := c.Bind(&body); err != nil {
@@ -145,6 +145,7 @@ func UserLogin(c *gin.Context) {
 	// generate access token and refresh token and send on response of login
 	accessClaims := helpers.MyClaims{
 		Name:   user.Email,
+		Type:   "access",
 		Role:   "admin",
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
@@ -155,6 +156,7 @@ func UserLogin(c *gin.Context) {
 
 	refreshClaims := helpers.MyClaims{
 		Name:   user.Email,
+		Type:   "refresh",
 		Role:   "admin",
 		UserId: int(user.ID),
 		StandardClaims: jwt.StandardClaims{
