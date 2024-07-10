@@ -1,6 +1,6 @@
 # Go REST API Project
 
-This project is a REST API built with Go, featuring user registration and login, CRUD operations for posts, JWT authentication, role-based authorization, and token refresh functionality.
+This is my first Go project trying to create simple restful apis, featuring user registration and login, CRUD operations for posts, JWT authentication, role-based authorization, and token refresh functionality.
 
 ## Features
 
